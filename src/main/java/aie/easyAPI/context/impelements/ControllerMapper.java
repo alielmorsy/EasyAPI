@@ -56,7 +56,7 @@ public class ControllerMapper implements IControllersMapper {
             if (data == null)
                 continue;
 
-            if (data.getRoute().isEmpty() || data.getRoute().isBlank()) {
+            if (data.getRoute().isEmpty() || data.getRoute().trim().isEmpty()) {
                 //TODO: Logger Thing
                 continue;
             }

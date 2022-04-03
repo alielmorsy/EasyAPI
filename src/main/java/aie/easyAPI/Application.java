@@ -53,12 +53,14 @@ public class Application {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             switch (arg) {
-                case "-p" -> {
+                case "-p": {
                     AssertChecks.assertIndex(i + 1, args.length, "Missing Port Number");
                     int port = Integer.parseInt(args[i + 1]);
                     context.setPort(port);
                 }
-                case "-t" -> context.setOnSameThread(true);
+                break;
+                case "-t":
+                    context.setOnSameThread(true);
             }
         }
 

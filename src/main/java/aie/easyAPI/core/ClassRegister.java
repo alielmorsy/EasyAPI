@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.jar.JarEntry;
@@ -98,7 +99,7 @@ public class ClassRegister implements IClassRegister {
                         clazz = _classLoader.loadClass(className);
                     } catch (ClassNotFoundException e) {
                         try {
-                            clazz = _classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Path.of(file.getAbsolutePath())));
+                            clazz = _classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
