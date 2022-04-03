@@ -1,7 +1,9 @@
 package aie.easyAPI;
 
 import aie.easyAPI.context.impelements.ApplicationContext;
+import aie.easyAPI.core.ClassRegister;
 import aie.easyAPI.utils.AssertChecks;
+import aie.easyAPI.utils.ContextUtils;
 
 public class Application {
     private static ApplicationContextFactory context;
@@ -42,6 +44,9 @@ public class Application {
         if (args.length != 0) {
             handleArgs(args);
         }
+        ClassRegister classRegister = new ClassRegister();
+        ContextUtils.addContextToObject(classRegister, context);
+        classRegister.findClasses();
     }
 
     private void handleArgs(String[] args) {
@@ -58,4 +63,5 @@ public class Application {
         }
 
     }
+
 }

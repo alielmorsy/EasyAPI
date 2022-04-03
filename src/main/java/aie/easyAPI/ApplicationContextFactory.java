@@ -4,6 +4,7 @@ import aie.easyAPI.annotation.ControllerRoute;
 import aie.easyAPI.annotation.HttpGet;
 import aie.easyAPI.context.*;
 import aie.easyAPI.context.impelements.ControllerMapper;
+import aie.easyAPI.core.ClassRegister;
 import aie.easyAPI.core.structure.Tree;
 import aie.easyAPI.enums.HttpType;
 import aie.easyAPI.excepation.ControllerException;
@@ -32,6 +33,7 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     private final ControllerMapper controllerMapper;
     private boolean OnSameThread = false;
     private final Tree controllerTree;
+    private ClassRegister classRegister;
 
     protected ApplicationContextFactory() {
         if (!cacheFolder.exists() || cacheFolder.isDirectory()) {
@@ -98,4 +100,14 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     }
 
     public abstract IService getServiceInstance(Class<? extends IService> serviceClass) throws ServiceException;
+
+    public ClassRegister classRegister() {
+        return classRegister;
+    }
+
+    public ApplicationContextFactory setClassRegister(ClassRegister classRegister) {
+        if (this.classRegister != null) throw new IllegalStateException("Class Register cant set twice");
+        this.classRegister = classRegister;
+        return this;
+    }
 }
