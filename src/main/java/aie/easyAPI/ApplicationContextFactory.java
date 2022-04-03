@@ -15,14 +15,18 @@ import aie.easyAPI.server.T;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public abstract class ApplicationContextFactory implements IContextWrapper {
-    protected final Map<Mapper, Controller> loadedControllers;
+
+    protected List<Class<? extends IService>> _services;
+    protected List<Class<? extends IMiddleware>> _middleWares;
     private int port;
     private final File cacheFolder = new File(".cache");
     private final ControllerMapper controllerMapper;
@@ -30,13 +34,15 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     private final Tree controllerTree;
 
     protected ApplicationContextFactory() {
-        loadedControllers = new HashMap<>();
         if (!cacheFolder.exists() || cacheFolder.isDirectory()) {
             cacheFolder.mkdir();
         }
         controllerMapper = new ControllerMapper(this);
         controllerTree = new Tree();
+        _services = new ArrayList<>();
+        _middleWares = new ArrayList<>();
     }
+
 
     public File getCacheFolder() {
         return cacheFolder;
@@ -68,26 +74,28 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
 
     @Override
     public void registerService(Class<? extends IService> service) throws ServiceException {
-
+        _services.add(service);
     }
 
     @Override
     public boolean unregisterService(Class<? extends IService> service) {
-        return false;
+        return _services.remove(service);
     }
 
     @Override
     public void registerMiddleware(Class<? extends IMiddleware> middlewareClass) {
-
+        _middleWares.add(middlewareClass);
     }
 
     @Override
     public boolean unregisterMiddleware(Class<? extends IMiddleware> middlewareClass) {
-        return false;
+        return _middleWares.remove(middlewareClass);
     }
 
 
     public Tree getControllerTree() {
         return controllerTree;
     }
+
+    public abstract IService getServiceInstance(Class<? extends IService> serviceClass) throws ServiceException;
 }
