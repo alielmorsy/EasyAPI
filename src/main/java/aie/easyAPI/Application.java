@@ -2,6 +2,7 @@ package aie.easyAPI;
 
 import aie.easyAPI.context.impelements.ApplicationContext;
 import aie.easyAPI.core.ClassRegister;
+import aie.easyAPI.core.structure.Node;
 import aie.easyAPI.utils.AssertChecks;
 import aie.easyAPI.utils.ContextUtils;
 
@@ -47,6 +48,18 @@ public class Application {
         ClassRegister classRegister = new ClassRegister();
         ContextUtils.addContextToObject(classRegister, context);
         classRegister.findClasses();
+        //   print();
+    }
+
+    public void print() {
+        print(context.getControllerTree().root, "");
+    }
+
+    private void print(Node<String> root, String space) {
+        System.out.println(space + root.getValue());
+        for (Node<String> node : root.getNodes()) {
+            print(node, space + "\t");
+        }
     }
 
     private void handleArgs(String[] args) {

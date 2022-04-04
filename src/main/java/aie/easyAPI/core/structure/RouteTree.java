@@ -3,27 +3,29 @@ package aie.easyAPI.core.structure;
 import aie.easyAPI.interfaces.ITree;
 import aie.easyAPI.models.ControllerRoutesMapping;
 
-public class Tree implements ITree<Node<String>> {
+public class RouteTree implements ITree<Node<String>> {
     public Node<String> root;
 
-    public Tree() {
+    public RouteTree() {
         root = new Node<>();
         root.setValue("index");
     }
 
     public void add(ControllerRoutesMapping map) {
-        Node<String> tmpNode = convertRoutesToSingleNode(map);
-        if (map.getRoute().equalsIgnoreCase("index")) {
 
+        if (map.getRoute().equalsIgnoreCase("index")) {
+            Node<String> tmpNode = convertRoutesToSingleNode(map);
             if (!root.getNodes().isEmpty()) {
                 tmpNode.nodes.addAll(root.nodes);
             }
             root = tmpNode;
         } else if (root.getNodes().isEmpty()) {
+            Node<String> tmpNode = convertRoutesToSingleNode(map);
             root.nodes.add(tmpNode);
         } else {
             Node<String> startupNode = getStartupNode(root, map);
             if (startupNode == null) {
+                Node<String> tmpNode = convertRoutesToSingleNode(map);
                 root.getNodes().add(tmpNode);
             } else {
                 handleControllerMap(startupNode, map);
@@ -99,6 +101,7 @@ public class Tree implements ITree<Node<String>> {
     }
 
     private void handleControllerMap(Node<String> startupNode, ControllerRoutesMapping mapping) {
+        System.out.println(mapping.getMainClass());
         for (ControllerRoutesMapping map : mapping.subLocations) {
             Node<String> tmpNode = getStartupNode(startupNode, map);
             if (tmpNode == null) {

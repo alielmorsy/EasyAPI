@@ -3,8 +3,6 @@ package aie.easyAPI.context.impelements;
 import aie.easyAPI.ApplicationContextFactory;
 import aie.easyAPI.annotation.*;
 import aie.easyAPI.context.Controller;
-import aie.easyAPI.core.structure.Node;
-import aie.easyAPI.core.structure.Tree;
 import aie.easyAPI.interfaces.IControllersMapper;
 import aie.easyAPI.enums.HttpType;
 import aie.easyAPI.excepation.ControllerException;
@@ -13,7 +11,6 @@ import aie.easyAPI.models.HttpRequestSimpleData;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +20,7 @@ public class ControllerMapper implements IControllersMapper {
 
     public ControllerMapper(ApplicationContextFactory context) {
         this.context = context;
+
     }
 
     @Override
@@ -37,6 +35,8 @@ public class ControllerMapper implements IControllersMapper {
         addController(controllerClass, map);
         context.getControllerTree().add(map);
     }
+
+
 
     private void addController(Class<? extends Controller> controllerClass, ControllerRoutesMapping map) throws ControllerException {
 
@@ -61,8 +61,9 @@ public class ControllerMapper implements IControllersMapper {
                 continue;
             }
             if (data.getRoute().equals("/")) {
+
                 if (data.getRequestType() != HttpType.GET) {
-                    ControllerRoutesMapping customMap = new ControllerRoutesMapping("");
+                    ControllerRoutesMapping customMap = new ControllerRoutesMapping("/");
                     customMap.setHttpType(data.getRequestType());
                     customMap.setMethodName(method.getName());
                     mapping.addRoute(customMap);

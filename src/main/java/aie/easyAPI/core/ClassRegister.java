@@ -31,7 +31,7 @@ public class ClassRegister implements IClassRegister {
     }
 
     private ClassesLoader _classLoader;
-    private IContextWrapper context;
+    public IContextWrapper context;
 
     public ClassRegister() {
         _classLoader = new ClassesLoader(Thread.currentThread().getContextClassLoader());
@@ -41,11 +41,12 @@ public class ClassRegister implements IClassRegister {
     public void findClasses() {
         String classpath = System.getProperty("java.class.path");
         String[] paths = classpath.split(System.getProperty("path.separator"));
-
-
         for (String path : paths) {
             File file = new File(path);
             if (file.exists()) {
+                if (!file.isDirectory() && !file.getName().endsWith(".class"))
+                    continue;
+
                 try {
                     findClasses(file, file, false);
                 } catch (Exception e) {
@@ -90,8 +91,7 @@ public class ClassRegister implements IClassRegister {
                         }
                     }
                 }
-            } else if (file.getName().toLowerCase().endsWith(".class")) {
-
+            } else  {
                 String className = createClassName(root, file);
                 if (!className.startsWith("java") || !className.startsWith("jdk")) {
                     Class<?> clazz = null;
