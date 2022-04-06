@@ -6,6 +6,19 @@ import aie.easyAPI.core.structure.Node;
 import aie.easyAPI.utils.AssertChecks;
 import aie.easyAPI.utils.ContextUtils;
 
+/**
+ * The Main Application Class It the Start Point of the application
+ * Usage:
+ * <pre>
+ *     {@code
+ *      public static void main(String[] args){
+ *          Application.run(args);
+ *      }
+ *     }
+ * </pre>
+ *
+ *
+ */
 public class Application {
     private static ApplicationContextFactory context;
 
@@ -14,7 +27,7 @@ public class Application {
      * @return Return the created application
      * @throws IllegalAccessException if the application already created before
      */
-    public static Application create(String[] args) throws IllegalAccessException {
+    public static Application run(String[] args) throws IllegalAccessException {
         if (context != null) {
             throw new IllegalAccessException("Application Already Initialized Before");
         }
@@ -51,6 +64,9 @@ public class Application {
         //   print();
     }
 
+    /***
+     * Print The Routes Tree
+     */
     public void print() {
         print(context.getControllerTree().root, "");
     }

@@ -31,6 +31,7 @@ public class RouteTree implements ITree<Node<String>> {
                 handleControllerMap(startupNode, map);
             }
         }
+
     }
 
     //TODO: Not Ready Yet
@@ -101,7 +102,7 @@ public class RouteTree implements ITree<Node<String>> {
     }
 
     private void handleControllerMap(Node<String> startupNode, ControllerRoutesMapping mapping) {
-        System.out.println(mapping.getMainClass());
+
         for (ControllerRoutesMapping map : mapping.subLocations) {
             Node<String> tmpNode = getStartupNode(startupNode, map);
             if (tmpNode == null) {

@@ -11,6 +11,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Application Context Factor is abstract class contains all global data to be within the main scope of the Applications it contains access to all using classes across teh project
+ * to add controllers or register services or middle wares or Database Handlers. and get cache folder...Etc
+ */
 
 public abstract class ApplicationContextFactory implements IContextWrapper {
 

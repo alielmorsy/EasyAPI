@@ -2,10 +2,16 @@ package aie.easyAPI.models;
 
 import aie.easyAPI.enums.ContentType;
 
+import java.io.InputStream;
+
+/**
+ * Container for both Request and response contains {@link ContentType} and the Ip of the client, Headers, Cookies, and Input Stream
+ * of the Request of Response once is written {@link #body}
+ */
 public class DataPack {
     private String connectionAddress;
     private ContentType contentType;
-    private String body;
+    private InputStream body;
     private Header[] headers;
     private Cookie[] cookies;
 
@@ -27,11 +33,11 @@ public class DataPack {
         return this;
     }
 
-    public String body() {
+    public InputStream body() {
         return body;
     }
 
-    public DataPack setBody(String body) {
+    public DataPack setBody(InputStream body) {
         this.body = body;
         return this;
     }
