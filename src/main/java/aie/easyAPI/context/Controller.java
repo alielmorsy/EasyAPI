@@ -6,6 +6,7 @@ import aie.easyAPI.annotation.HttpGet;
 import aie.easyAPI.annotation.HttpHead;
 import aie.easyAPI.annotation.HttpDelete;
 import aie.easyAPI.models.DataPack;
+import aie.easyAPI.models.HttpBaseRequest;
 
 /**
  * Abstract Class for creating a controllers for your API or website
