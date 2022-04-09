@@ -3,13 +3,14 @@ Easy API Tool For Developers whose wanna create their own api without a knoweldg
 
 > Important Note that project still underdevelopment 
 
-## My Sights For Applicaion
+## My Sights For Application
 
  - [x] Create Controller And Routes 
  - [x] Create Service and Middlewares
  - [x] Optimize Routes Generator 
+ - [x] Create Serializable For Request and Responses (Using Json Currently) 
  - [ ] Create Http Server
  - [ ] Create WebSockets
- - [ ] Create Main Controllers [Login-Register-generate Api Tokens-....]
+ - [ ] Create Main Controllers (Login-Register-generate Api Tokens-....)
  - [ ] Create Database Context
  > **This is my Visions For Project Now. Wish me Luck :)**
