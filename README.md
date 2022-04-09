@@ -1,15 +1,15 @@
 # Easy API
-Easy API Tool For Developers whose wanna create their own api without a knoweldge on backend developement. The Tool should support alot of tools that helps to create your own API without the complexity of handle dataor vaildation, or requests.
+Easy API Tool For Developers whose want to create their own api without knowledge on backend development. The Tool should support a lot of tools that helps to create your own API without the complexity of handle data validation, or requests.
 
 > Important Note that project still underdevelopment 
-
+> Current State: Creating Http Server
 ## My Sights For Application
 
  - [x] Create Controller And Routes 
  - [x] Create Service and Middlewares
  - [x] Optimize Routes Generator 
  - [x] Create Serializable For Request and Responses (Using Json Currently) 
- - [ ] Create Http Server
+ - [x] Create Http Server
  - [ ] Create WebSockets
  - [ ] Create Main Controllers (Login-Register-generate Api Tokens-....)
  - [ ] Create Database Context
