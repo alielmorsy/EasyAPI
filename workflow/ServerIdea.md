@@ -3,7 +3,7 @@
 This File Contains My Ideas about how server will work, or still working :)
 
 > My Idea Is Currently Unstable I am still thinking about how will make that working
-
+> The First Implement will without using SSL to know first if that build will success or not
 ## Current Server Flow Will Be
 
 ### Server Starts With 4 Threads
