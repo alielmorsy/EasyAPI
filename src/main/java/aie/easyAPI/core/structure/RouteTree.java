@@ -65,7 +65,7 @@ public class RouteTree implements ITree<Node<String>> {
         return mapping;
     }
 
-    public Node<String> convertRoutesToSingleNode(ControllerRoutesMapping mapping) {
+    private Node<String> convertRoutesToSingleNode(ControllerRoutesMapping mapping) {
         Node<String> mainNode = new Node<>();
         mainNode.setHttpType(mainNode.getHttpType());
         mainNode.setMethodName(mainNode.getMethodName());
@@ -122,7 +122,7 @@ public class RouteTree implements ITree<Node<String>> {
             if (n.getValue().equals(subRoute)) {
                 return n;
             } else if (n.isVariable()) {
-                mapping.setRoute(n.getValue());
+                mapping.addVariableForMap(n.getValue(), subRoute);
                 return n;
             }
         }

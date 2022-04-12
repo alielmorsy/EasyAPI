@@ -4,7 +4,9 @@ import aie.easyAPI.context.Controller;
 import aie.easyAPI.enums.HttpType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ControllerRoutesMapping {
     private String route;
@@ -20,6 +22,7 @@ public class ControllerRoutesMapping {
         return variableRoutes;
     }
 
+    private Map<String, String> variablesMap;
     public List<ControllerRoutesMapping> subLocations;
     private List<String> variableRoutes;
     private String methodName = "index";
@@ -68,6 +71,13 @@ public class ControllerRoutesMapping {
         variableRoutes.add(variableRoute);
     }
 
+    public void addVariableForMap(String variableName, String value) {
+        if (variablesMap == null) {
+            variablesMap = new HashMap<>();
+        }
+        variablesMap.put(variableName, value);
+    }
+
     public String getMethodName() {
         return methodName;
     }
@@ -83,5 +93,9 @@ public class ControllerRoutesMapping {
 
     public void setMainClass(Class<? extends Controller> mainClass) {
         this.mainClass = mainClass;
+    }
+
+    public Map<String, String> variablesMap() {
+        return variablesMap;
     }
 }
