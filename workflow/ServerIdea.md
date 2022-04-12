@@ -1,9 +1,10 @@
-# Server Idea
+# Server Idea (Changed Some Things)
 
 This File Contains My Ideas about how server will work, or still working :)
 
 > My Idea Is Currently Unstable I am still thinking about how will make that working
 > The First Implement will without using SSL to know first if that build will success or not
+
 ## Current Server Flow Will Be
 
 ### Server Starts With 4 Threads
@@ -46,5 +47,13 @@ It's a quite simple, When our main thread is done doing its work, it will run my
 its connection will get a unique id to write data to client moment is ready, then ready the second thread read data and
 determine which http request type then send it to its thread. On each thread there is some problems like we can't define
 how much time the request will take or the type of the request...etc. So my idea is using ThreadPool contains like 2 to
-4 threads, on each and queue mode to handle tht request 
+4 threads, on each and queue mode to handle tht request
 
+## Edit 1
+
+Let's talk first about why that can't be done. Its kinda easy because that require some additional threads to handle
+operations So My Edits would be:
+
+- Execute everything using pool, will read headers using our thread if the request body is big, move it to the thread
+  pool. I will do the same for writing
+- When Route Found will run the function in the pool 
