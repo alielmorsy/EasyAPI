@@ -56,4 +56,6 @@ operations So My Edits would be:
 
 - Execute everything using pool, will read headers using our thread if the request body is big, move it to the thread
   pool. I will do the same for writing
-- When Route Found will run the function in the pool 
+- When Route Found will run the function in the pool
+- When Function Results is ready, will handle the response and make it ready into byteBuffer and add it to its unique id to be sent via our thread
+- 

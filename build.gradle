@@ -15,7 +15,14 @@ java {
 
 }
 dependencies {
-    implementation project(":randomTests")
+
+    implementation 'mysql:mysql-connector-java:8.0.28'
+
+//    implementation files('libs/commons-dbcp2-2.9.0.jar')
+//    implementation files('libs/commons-pool2-2.11.1.jar')
+// https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
+    implementation 'commons-dbcp:commons-dbcp:1.4'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     implementation 'org.json:json:20220320'
