@@ -1,23 +1,22 @@
-package aie.easyAPI.context.impelements;
+package aie.easyAPI.core;
 
 import aie.easyAPI.ApplicationContextFactory;
 import aie.easyAPI.annotation.*;
 import aie.easyAPI.context.Controller;
 import aie.easyAPI.core.structure.Node;
+import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.interfaces.IControllersMapper;
 import aie.easyAPI.excepation.ControllerException;
-import aie.easyAPI.models.ControllerRoutesMapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class ControllerMapper implements IControllersMapper {
-    private ApplicationContextFactory context;
+    private IContextWrapper context;
 
 
-    public ControllerMapper(ApplicationContextFactory context) {
+    public ControllerMapper(IContextWrapper context) {
         this.context = context;
 
     }
@@ -26,8 +25,8 @@ public class ControllerMapper implements IControllersMapper {
     public void addController(Class<? extends Controller> controllerClass) throws ControllerException {
         ControllerRoute mapAnnotation = controllerClass.getDeclaredAnnotation(ControllerRoute.class);
         if (mapAnnotation == null) {
-            throw new ControllerException("Controller: " + controllerClass.getName() + " Not Mapped");
-        }
+        //    throw new ControllerException("Controller: " + controllerClass.getName() + " Not Mapped");
+      return;  }
 
 
         var node = context.getRouteTree().addController(mapAnnotation.value(), controllerClass);

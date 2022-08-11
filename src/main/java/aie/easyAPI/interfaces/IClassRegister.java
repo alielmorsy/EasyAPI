@@ -4,10 +4,9 @@ import java.util.List;
 
 public interface IClassRegister {
 
-     void findClasses();
+    void findClasses();
 
-     void handleClass(Class<?> clazz);
-
+    IClassRegister setContext(IContextWrapper context);
 
 
 }

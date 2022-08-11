@@ -1,13 +1,14 @@
 package aie.easyAPI.interfaces;
 
 import aie.easyAPI.context.Controller;
+import aie.easyAPI.core.ControllerMapper;
 import aie.easyAPI.core.structure.Node;
 import aie.easyAPI.excepation.RouteException;
 
 import java.lang.reflect.Method;
 
 /**
- * interface to route Mapping Tree contains all Routes specs to be easily find them see {@link  aie.easyAPI.context.impelements.ControllerMapper}
+ * interface to route Mapping Tree contains all Routes specs to be easily find them see {@link  ControllerMapper}
  */
 public interface IRouteTree {
     /**

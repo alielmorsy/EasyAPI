@@ -79,6 +79,7 @@ public class Application {
      * @throws ServerException if failed to run server
      */
     public void start() throws ServerException {
+        context.getDefaultStopWatch().start();
         if (searchForClasses) {
             var classRegister = ClassRegister.getInstance();
             classRegister.setContext(context);

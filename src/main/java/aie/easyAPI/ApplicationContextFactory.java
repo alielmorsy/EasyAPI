@@ -1,12 +1,13 @@
 package aie.easyAPI;
 
 import aie.easyAPI.context.*;
-import aie.easyAPI.context.impelements.ControllerMapper;
+import aie.easyAPI.core.ControllerMapper;
 import aie.easyAPI.core.structure.RouteMapper;
 import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.interfaces.IRouteTree;
+import aie.easyAPI.utils.StopWatch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -28,6 +29,7 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
 
     private final IRouteTree controllerRouteMapper;
     private final ObjectMapper mapper;
+    private final StopWatch stopWatch;
 
     protected ApplicationContextFactory() {
         if (!cacheFolder.exists() || cacheFolder.isDirectory()) {
@@ -38,6 +40,7 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
         controllerMapper = new ControllerMapper(this);
         controllerRouteMapper = new RouteMapper();
         mapper = new ObjectMapper();
+        stopWatch = new StopWatch(true);
     }
 
 
@@ -87,5 +90,10 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     @Override
     public ObjectMapper getDefaultObjectMapper() {
         return mapper;
+    }
+
+    @Override
+    public StopWatch getDefaultStopWatch() {
+        return stopWatch;
     }
 }

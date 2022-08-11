@@ -3,12 +3,10 @@ package aie.easyAPI.core.structure;
 import aie.easyAPI.context.Controller;
 import aie.easyAPI.excepation.RouteException;
 import aie.easyAPI.interfaces.IRouteTree;
-import aie.easyAPI.models.ControllerRoutesMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 public class RouteMapper implements IRouteTree {
     private static final Logger logger = LoggerFactory.getLogger(RouteMapper.class);

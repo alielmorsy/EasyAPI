@@ -1,5 +1,6 @@
 package aie.easyAPI.interfaces;
 
+import aie.easyAPI.excepation.ConnectionException;
 import aie.easyAPI.excepation.ServerException;
 
 /**
@@ -10,5 +11,5 @@ public interface IHandler {
     /**
      * Main Class of interface should be called for each handler
      */
-    void handle() throws ServerException;
+    void handle() throws ServerException, ConnectionException;
 }

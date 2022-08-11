@@ -3,8 +3,6 @@ package aie.easyAPI.server.core;
 import aie.easyAPI.context.impelements.ApplicationContext;
 import aie.easyAPI.excepation.ServerException;
 import aie.easyAPI.interfaces.IContextWrapper;
-import aie.easyAPI.server.ClientService;
-import aie.easyAPI.server.ConnectionHandler;
 import aie.easyAPI.server.Server;
 import aie.easyAPI.server.ServerState;
 import org.slf4j.Logger;
@@ -63,15 +61,15 @@ public class StandardServer implements Server {
 
     private void internalStart() throws ServerException {
         logger.info("Starting Server");
-        long start = System.nanoTime();
         try (ServerSocketChannel server = ServerSocketChannel.open()) {
             server.configureBlocking(false);
             server.bind(new InetSocketAddress("0.0.0.0", port));
             selector = Selector.open();
-            server.register(selector, server.validOps());
+            server.register(selector, SelectionKey.OP_ACCEPT);
             currentState = ServerState.Started;
-            logger.info("Server Started Successfully time Used: {} ms", TimeUnit.NANOSECONDS.toMillis((System.nanoTime() - start)));
-
+            context.getDefaultStopWatch().stop();
+            logger.info("Server took {} to start", context.getDefaultStopWatch().getElapsedTime(TimeUnit.MILLISECONDS));
+            context.getDefaultStopWatch().reset();
             waitForSelection(selector);
         } catch (IOException e) {
             throw new ServerException("Failed To Run Server", e);
@@ -80,7 +78,7 @@ public class StandardServer implements Server {
 
     private void waitForSelection(Selector selector) throws IOException {
         while (!Thread.interrupted() && currentState == ServerState.Started) {
-            if (selector.select() < 0) {
+            if (selector.select(300) < 0) {
                 continue;
             }
             Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
@@ -94,9 +92,6 @@ public class StandardServer implements Server {
                 if (key.isReadable()) {
                     doRead(key);
                 }
-                if (key.isWritable()) {
-                    doWrite(key);
-                }
             }
         }
     }
@@ -105,18 +100,19 @@ public class StandardServer implements Server {
         SocketChannel channel = serverChannel.accept();
         channel.configureBlocking(false);
         ConnectionHandler container = new ConnectionHandler(context, channel);
-        channel.register(selector, channel.validOps(), container);
+        channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, container);
     }
 
-    private void doRead(SelectionKey key) throws IOException {
-        ClientService clientService = (ClientService) key.attachment();
-        clientService.read();
+    private boolean doRead(SelectionKey key) throws IOException {
+        ConnectionHandler clientService = (ConnectionHandler) key.attachment();
+        try {
+            clientService.read();
+            return true;
+        } catch (IOException e) {
+            clientService.close();
+        }
+        return false;
     }
 
-    private void doWrite(SelectionKey key) throws IOException {
-        ClientService clientService = (ClientService) key.attachment();
-        if (clientService.readToWrite())
-            clientService.write();
-    }
 
 }

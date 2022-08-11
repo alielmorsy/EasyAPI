@@ -1,4 +1,2 @@
 rootProject.name = 'EasyAPI'
-include 'randomTests'
-include 'httpServer'
 

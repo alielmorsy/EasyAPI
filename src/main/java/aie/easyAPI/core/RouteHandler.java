@@ -2,8 +2,7 @@ package aie.easyAPI.core;
 
 import aie.easyAPI.context.IService;
 import aie.easyAPI.core.structure.Node;
-import aie.easyAPI.excepation.RouteException;
-import aie.easyAPI.excepation.ServerException;
+import aie.easyAPI.excepation.ConnectionException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.interfaces.IHandler;
@@ -22,10 +21,12 @@ public class RouteHandler implements IHandler {
     public RouteHandler(IContextWrapper contextWrapper, Node<String> routeNode, JsonNode jsonNode) {
         this.routeNode = routeNode;
         this.jsonNode = jsonNode;
+        this.contextWrapper = contextWrapper;
     }
 
     @Override
-    public void handle() throws ServerException {
+    public void handle() throws ConnectionException {
+
         var clazz = routeNode.controllerClass();
         var method = routeNode.method();
         var constructor = clazz.getDeclaredConstructors()[0];
@@ -42,9 +43,10 @@ public class RouteHandler implements IHandler {
             } else {
                 throw new IllegalArgumentException("For Now Method should have only 1 parameter");
             }
-            value = contextWrapper.getDefaultObjectMapper().writeValueAsString(result);
+            if (result != null)
+                value = contextWrapper.getDefaultObjectMapper().writeValueAsString(result);
         } catch (ServiceException | InvocationTargetException | InstantiationException | IllegalAccessException | JsonProcessingException e) {
-            throw new ServerException("Failed To Create Instance for Controller: ".concat(clazz.getName()), e);
+            throw new ConnectionException("Failed To Create Instance for Controller: ".concat(clazz.getName()), e);
         }
     }
 

@@ -1,6 +1,7 @@
 package aie.easyAPI.server;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 /**
@@ -13,7 +14,7 @@ public interface ClientService {
      *
      * @throws IOException if stream closed while writing
      */
-    void write() throws IOException;
+    void write(ByteBuffer buffer) throws IOException;
 
     /**
      * start reading from data from client
@@ -22,10 +23,5 @@ public interface ClientService {
      */
     void read() throws IOException;
 
-    /**
-     * Check Whether data is ready to be sent or not
-     * @return true if data ready otherwise false
-     */
-    boolean readToWrite();
 
 }

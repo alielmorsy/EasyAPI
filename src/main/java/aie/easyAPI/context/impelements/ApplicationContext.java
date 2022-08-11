@@ -32,12 +32,10 @@ public class ApplicationContext extends ApplicationContextFactory {
 
     private <T extends IService> T createObjectForService(Class<T> serviceClass) throws ServiceException {
         Constructor<?> con = serviceClass.getConstructors()[0];
-        Object[] parameters = new Object[con.getTypeParameters().length];
+        Object[] parameters = new Object[con.getParameterTypes().length];
         int index = 0;
         for (Class<?> p : con.getParameterTypes()) {
-            if (p.isAssignableFrom(IDatabase.class)) {
-                //TODO: Setup Database Format
-            } else if (p.isAssignableFrom(IService.class)) {
+            if (IService.class.isAssignableFrom(p)) {
                 parameters[index++] = getServiceInstance((Class<T>) p);
             } else {
                 throw new ServiceException("Service " + serviceClass.getSimpleName() + "Has Parameter: " + p.getSimpleName() + ", State Unknown");

@@ -1,13 +1,13 @@
 import aie.easyAPI.annotation.ControllerRoute;
 import aie.easyAPI.annotation.APIRequest;
 
-@ControllerRoute("get")
+@ControllerRoute("test1")
 public class TestC extends aie.easyAPI.context.Controller {
-    @APIRequest("here")
+    @APIRequest("hello")
     public void Lmao() {
 
     }
-    @APIRequest("lmao/{lmao}")
+    @APIRequest("hi")
     public void a(){
 
     }

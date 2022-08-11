@@ -5,6 +5,7 @@ import aie.easyAPI.context.IMiddleware;
 import aie.easyAPI.context.IService;
 import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
+import aie.easyAPI.utils.StopWatch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface IContextWrapper {
@@ -73,4 +74,9 @@ public interface IContextWrapper {
      */
     ObjectMapper getDefaultObjectMapper();
 
+    /**
+     * Returns object of stop watch used to count whole time used to run the server
+     * @return StopWatch instance
+     */
+    StopWatch getDefaultStopWatch();
 }

@@ -7,38 +7,43 @@ import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IClassRegister;
 import aie.easyAPI.interfaces.IContextWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class ClassRegister implements IClassRegister {
-
+    private static final Logger logger = LoggerFactory.getLogger(ClassRegister.class);
     private static ClassRegister instance;
 
-    public static ClassRegister getInstance() {
+    private Executor executors;
+
+    public static IClassRegister getInstance() {
         if (instance == null) {
             instance = new ClassRegister();
         }
         return instance;
     }
 
-    private ClassesLoader classLoader;
-    public IContextWrapper context;
+    private final ClassesLoader classLoader;
+    private IContextWrapper context;
 
-    public ClassRegister setContext(IContextWrapper context) {
-        this.context = context;
-        return this;
-    }
 
     public ClassRegister() {
         classLoader = new ClassesLoader(Thread.currentThread().getContextClassLoader());
+        executors = Executors.newFixedThreadPool(2);
     }
 
     @Override
@@ -51,89 +56,51 @@ public class ClassRegister implements IClassRegister {
             if (file.exists()) {
                 if (!file.isDirectory() && !file.getName().endsWith(".class"))
                     continue;
-
-                try {
-
-                    findClasses(file, file, false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                findClassesV2(file, file);
             }
         }
     }
 
-    @Override
-    public void handleClass(Class<?> clazz) {
-
-    }
-
-    private void findClasses(File root, File file, boolean includeJars) throws Exception {
+    private void findClassesV2(File root, File file) {
         if (file.isDirectory()) {
             for (File child : Objects.requireNonNull(file.listFiles())) {
-                findClasses(root, child, includeJars);
+                //    findClassesV2(root, child);
+                executors.execute(() -> findClassesV2(root, child));
             }
-        } else {
-            if (file.getName().toLowerCase().endsWith(".jar") && includeJars) {
-                JarFile jar = null;
+            return;
+        }
+        String className = createClassName(root, file);
+        //|| className.contains("easyAPI")
+        if (!(className.startsWith("jdk") || className.startsWith("java"))) {
+            Class<?> clazz;
+            try {
+                clazz = classLoader.loadClass(className);
+            } catch (ClassNotFoundException e) {
                 try {
-                    jar = new JarFile(file);
-                } catch (Exception ignored) {
+                    clazz = classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+                } catch (IOException ex) {
+                    logger.error("Failed to Load Class: ".concat(className), ex);
+                    return;
                 }
-                if (jar != null) {
-
-                    URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
-                    URLClassLoader cl = URLClassLoader.newInstance(urls);
-                    Enumeration<JarEntry> entries = jar.entries();
-                    while (entries.hasMoreElements()) {
-                        JarEntry entry = entries.nextElement();
-                        String name = entry.getName();
-                        int extIndex = name.lastIndexOf(".class");
-                        if (extIndex > 0) {
-                            String className = name.substring(0, extIndex).replace("/", ".");
-                            Class<?> clazz = cl.loadClass(className);
-                            if (clazz != null) {
-                                checkClass(clazz);
-                            }
-                        }
-                    }
-                }
-            } else  {
-                String className = createClassName(root, file);
-                if (!className.startsWith("java") || !className.startsWith("jdk")) {
-                    Class<?> clazz = null;
-                    try {
-                        clazz = classLoader.loadClass(className);
-                    } catch (ClassNotFoundException e) {
-                        try {
-                            clazz = classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    if (clazz != null) {
-
-                        checkClass(clazz);
-                    }
-                }
-
             }
+            checkClass(clazz);
         }
     }
 
     private void checkClass(Class<?> clazz) {
-        if (Controller.class.equals(clazz.getSuperclass())) {
+        if (Controller.class.isAssignableFrom(clazz)) {
             try {
                 context.addController((Class<? extends Controller>) clazz);
             } catch (ControllerException e) {
                 e.printStackTrace();
             }
-        } else if (clazz.getInterfaces().length > 0 && IService.class.equals(clazz.getInterfaces()[0])) {
+        } else if (IService.class.isAssignableFrom(clazz)) {
             try {
                 context.registerService((Class<? extends IService>) clazz);
             } catch (ServiceException e) {
-                e.printStackTrace();
+                logger.error("Failed To Register Service", e);
             }
-        } else if (clazz.getInterfaces().length > 0 && IMiddleware.class.equals(clazz.getInterfaces()[0])) {
+        } else if (IMiddleware.class.isAssignableFrom(clazz)) {
             context.registerMiddleware((Class<? extends IMiddleware>) clazz);
         }
     }
@@ -148,5 +115,11 @@ public class ClassRegister implements IClassRegister {
             file = file.getParentFile();
         }
         return sb.toString();
+    }
+
+    @Override
+    public IClassRegister setContext(IContextWrapper context) {
+        this.context = context;
+        return this;
     }
 }

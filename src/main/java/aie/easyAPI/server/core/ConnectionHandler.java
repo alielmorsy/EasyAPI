@@ -1,9 +1,12 @@
-package aie.easyAPI.server;
+package aie.easyAPI.server.core;
 
 import aie.easyAPI.core.RouteHandler;
+import aie.easyAPI.excepation.ConnectionException;
 import aie.easyAPI.excepation.RouteException;
-import aie.easyAPI.excepation.ServerException;
 import aie.easyAPI.interfaces.IContextWrapper;
+import aie.easyAPI.models.BadRequest;
+import aie.easyAPI.server.ClientService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -19,11 +22,9 @@ public class ConnectionHandler implements ClientService, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
     private SocketChannel channel;
     private final IContextWrapper context;
-    private boolean readyToWrite = false;
     private boolean readStarted = false;
     private int length = 0;
     private ByteBuffer currentRead;
-    private ByteBuffer bufferToWrite;
 
     public ConnectionHandler(IContextWrapper context, SocketChannel channel) {
         this.channel = channel;
@@ -35,7 +36,12 @@ public class ConnectionHandler implements ClientService, Closeable {
     public void read() throws IOException {
         if (!readStarted) {
             ByteBuffer tmp = ByteBuffer.allocate(4);
-            channel.read(tmp);
+            int read = channel.read(tmp);
+            if (read == -1) {
+                close();
+                return;
+            }
+            tmp.flip();
             length = tmp.getInt();
             currentRead = ByteBuffer.allocate(length);
             readStarted = true;
@@ -47,6 +53,7 @@ public class ConnectionHandler implements ClientService, Closeable {
         int read = channel.read(tmp);
         if (read == -1) {
             close();
+            return;
         }
         length -= read;
         checkLengthAndThrowException();
@@ -59,15 +66,8 @@ public class ConnectionHandler implements ClientService, Closeable {
     }
 
     @Override
-    public boolean readToWrite() {
-        return readyToWrite;
-    }
-
-    @Override
-    public void write() throws IOException {
-        channel.write(bufferToWrite);
-        bufferToWrite = null;
-        readyToWrite = false;
+    public void write(ByteBuffer buffer) throws IOException {
+        channel.write(buffer);
     }
 
     private void checkLengthAndThrowException() {
@@ -79,7 +79,6 @@ public class ConnectionHandler implements ClientService, Closeable {
         String requestString = null;
         try {
             var json = mapper.readValue(currentRead.array(), JsonNode.class);
-
             var request = json.get("request");
             if (request == null) {
                 sendBadRequest();
@@ -89,29 +88,39 @@ public class ConnectionHandler implements ClientService, Closeable {
             var node = context.getRouteTree().search(requestString);
             var handler = new RouteHandler(context, node, json.get("data"));
             handler.handle();
-            bufferToWrite = ByteBuffer.wrap(handler.value().getBytes(StandardCharsets.UTF_8));
-            readyToWrite = true;
+            var value = handler.value();
+            var buffer = value == null ? ByteBuffer.allocate(0) : ByteBuffer.wrap(value.getBytes(StandardCharsets.UTF_8));
+            write(buffer);
         } catch (IOException e) {
             logger.error("Failed To Parse JSON from client", e);
             sendBadRequest();
         } catch (RouteException e) {
             logger.error("Failed To Map Route: ".concat(requestString), e);
-        } catch (ServerException e) {
-            logger.error("", e);
-            try {
-                close();
-            } catch (IOException ex) {
-                logger.error("", ex);
-            }
+        } catch (ConnectionException e) {
+            e.printStackTrace();
+            sendBadRequest();
         }
 
     }
 
 
     private void sendBadRequest() {
+        logger.warn("Sending Bad Request");
         if (channel.isConnected()) {
-            bufferToWrite = ByteBuffer.wrap("Bad Request: ".getBytes(StandardCharsets.UTF_8));
-            readyToWrite = true;
+
+            try {
+                var buffer = context.getDefaultObjectMapper().writeValueAsBytes(new BadRequest("Bad Request", null));
+                write(ByteBuffer.wrap(buffer));
+            } catch (JsonProcessingException e) {
+                //
+            } catch (IOException e) {
+                try {
+                    close();
+                } catch (IOException ex) {
+                    //closed
+                }
+            }
+
         } else {
             try {
                 close();
@@ -123,9 +132,8 @@ public class ConnectionHandler implements ClientService, Closeable {
 
     @Override
     public void close() throws IOException {
+        logger.debug("Closing Connection");
         channel.close();
-        bufferToWrite = null;
-        currentRead = null;
         channel = null;
 
     }
