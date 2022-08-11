@@ -1,6 +1,8 @@
 package aie.easyAPI.server;
 
+import aie.easyAPI.core.RouteHandler;
 import aie.easyAPI.excepation.RouteException;
+import aie.easyAPI.excepation.ServerException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 public class ConnectionHandler implements ClientService, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
     private SocketChannel channel;
-    private IContextWrapper context;
+    private final IContextWrapper context;
     private boolean readyToWrite = false;
     private boolean readStarted = false;
     private int length = 0;
@@ -64,9 +66,11 @@ public class ConnectionHandler implements ClientService, Closeable {
     @Override
     public void write() throws IOException {
         channel.write(bufferToWrite);
+        bufferToWrite = null;
+        readyToWrite = false;
     }
 
-    private void checkLengthAndThrowException() throws IOException {
+    private void checkLengthAndThrowException() {
         if (length < 0) sendBadRequest();
     }
 
@@ -83,23 +87,38 @@ public class ConnectionHandler implements ClientService, Closeable {
             }
             requestString = request.textValue();
             var node = context.getRouteTree().search(requestString);
-
+            var handler = new RouteHandler(context, node, json.get("data"));
+            handler.handle();
+            bufferToWrite = ByteBuffer.wrap(handler.value().getBytes(StandardCharsets.UTF_8));
+            readyToWrite = true;
         } catch (IOException e) {
-            logger.error("Failed To Parse String from client", e);
-            try {
-                sendBadRequest();
-            } catch (IOException ex) {
-                logger.error("Failed To Send Bad Request to client", ex);
-            }
+            logger.error("Failed To Parse JSON from client", e);
+            sendBadRequest();
         } catch (RouteException e) {
             logger.error("Failed To Map Route: ".concat(requestString), e);
+        } catch (ServerException e) {
+            logger.error("", e);
+            try {
+                close();
+            } catch (IOException ex) {
+                logger.error("", ex);
+            }
         }
 
     }
 
 
-    private void sendBadRequest() throws IOException {
-        channel.write(ByteBuffer.wrap("Bad Request: ".getBytes(StandardCharsets.UTF_8)));
+    private void sendBadRequest() {
+        if (channel.isConnected()) {
+            bufferToWrite = ByteBuffer.wrap("Bad Request: ".getBytes(StandardCharsets.UTF_8));
+            readyToWrite = true;
+        } else {
+            try {
+                close();
+            } catch (IOException e) {
+                //ignored
+            }
+        }
     }
 
     @Override

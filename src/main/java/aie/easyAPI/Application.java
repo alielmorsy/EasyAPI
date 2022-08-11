@@ -48,11 +48,23 @@ public class Application {
         return context;
     }
 
+    /**
+     * if searchForClasses set to true it will start searching over all classes to find controllers and services
+     *
+     * @return default Application instance
+     */
     public Application searchForClasses(boolean searchForClasses) {
         this.searchForClasses = searchForClasses;
         return this;
     }
 
+    /**
+     * Set Server port
+     *
+     * @param port server port
+     * @return default Application instance
+     * @throws ServerException if its wrong port
+     */
     public Application setPort(int port) throws ServerException {
         if (port > 65325 || port < 1024) {
             throw new ServerException("Port can be only from 1024 to 65325");
@@ -61,6 +73,11 @@ public class Application {
         return this;
     }
 
+    /**
+     * to start server mapping and run Server on provided port
+     *
+     * @throws ServerException if failed to run server
+     */
     public void start() throws ServerException {
         if (searchForClasses) {
             var classRegister = ClassRegister.getInstance();

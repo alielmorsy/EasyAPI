@@ -14,12 +14,6 @@ import static aie.easyAPI.server.core.HeaderParser.BASIC_HEADER_PATTERN;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap("gsdgsds sdfLMEOASD".getBytes());
-        long start = System.nanoTime();
-        String request = StandardCharsets.UTF_8.decode(buffer).toString();
-        System.out.println(System.nanoTime() - start);
-        start = System.nanoTime();
-      String  re1quest = new String(buffer.array());
-        System.out.println(System.nanoTime() - start);
+
     }
 }

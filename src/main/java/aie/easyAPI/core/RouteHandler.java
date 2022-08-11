@@ -17,6 +17,7 @@ public class RouteHandler implements IHandler {
     private Node<String> routeNode;
     private JsonNode jsonNode;
     private IContextWrapper contextWrapper;
+    private String value;
 
     public RouteHandler(IContextWrapper contextWrapper, Node<String> routeNode, JsonNode jsonNode) {
         this.routeNode = routeNode;
@@ -41,7 +42,7 @@ public class RouteHandler implements IHandler {
             } else {
                 throw new IllegalArgumentException("For Now Method should have only 1 parameter");
             }
-            contextWrapper.getDefaultObjectMapper().writeValueAsString(result);
+            value = contextWrapper.getDefaultObjectMapper().writeValueAsString(result);
         } catch (ServiceException | InvocationTargetException | InstantiationException | IllegalAccessException | JsonProcessingException e) {
             throw new ServerException("Failed To Create Instance for Controller: ".concat(clazz.getName()), e);
         }
@@ -60,4 +61,7 @@ public class RouteHandler implements IHandler {
         return objects;
     }
 
+    public String value() {
+        return value;
+    }
 }

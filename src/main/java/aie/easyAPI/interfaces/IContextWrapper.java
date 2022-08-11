@@ -9,11 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface IContextWrapper {
     /**
-     * To Add Controller
-     * Check {@link Controller}
+     * To Add Controller to Route Tree check {@link Controller},{@link IRouteTree}
      *
      * @param controller The Class Of The Container
-     * @throws ControllerException
+     * @throws ControllerException if controller not mapped by {@link aie.easyAPI.annotation.ControllerRoute}
      */
     void addController(Class<? extends Controller> controller) throws ControllerException;
 
@@ -22,7 +21,7 @@ public interface IContextWrapper {
      * Check {@link IService}
      *
      * @param service the server class
-     * @throws ServiceException
+     * @throws ServiceException if service already defined
      */
 
     void registerService(Class<? extends IService> service) throws ServiceException;
@@ -67,6 +66,11 @@ public interface IContextWrapper {
      */
     IRouteTree getRouteTree();
 
+    /**
+     * Return default instance of {@link  ObjectMapper}
+     *
+     * @return instance of ObjectMapper class
+     */
     ObjectMapper getDefaultObjectMapper();
 
 }

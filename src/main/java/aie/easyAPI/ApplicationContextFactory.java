@@ -7,6 +7,7 @@ import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.interfaces.IRouteTree;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,15 +27,17 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     private final ControllerMapper controllerMapper;
 
     private final IRouteTree controllerRouteMapper;
+    private final ObjectMapper mapper;
 
     protected ApplicationContextFactory() {
         if (!cacheFolder.exists() || cacheFolder.isDirectory()) {
             cacheFolder.mkdir();
         }
-        controllerMapper = new ControllerMapper(this);
-        controllerRouteMapper = new RouteMapper();
         _services = new ArrayList<>();
         _middleWares = new ArrayList<>();
+        controllerMapper = new ControllerMapper(this);
+        controllerRouteMapper = new RouteMapper();
+        mapper = new ObjectMapper();
     }
 
 
@@ -81,4 +84,8 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
         return controllerRouteMapper;
     }
 
+    @Override
+    public ObjectMapper getDefaultObjectMapper() {
+        return mapper;
+    }
 }
