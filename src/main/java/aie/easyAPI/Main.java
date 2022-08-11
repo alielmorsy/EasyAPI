@@ -1,32 +1,25 @@
 package aie.easyAPI;
 
-import aie.easyAPI.context.impelements.ApplicationContext;
-import aie.easyAPI.core.serialization.JsonSerialize;
-import aie.easyAPI.models.Header;
-import aie.easyAPI.server.intenral.InternalServer;
-import aie.easyAPI.utils.StopWatch;
-import com.mysql.cj.jdbc.Driver;
-import org.apache.commons.dbcp.BasicDataSource;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.ResultSet;
+import aie.easyAPI.server.core.StandardServer;
+import org.slf4j.LoggerFactory;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static aie.easyAPI.server.core.HeaderParser.ACCEPT_HEADER_PATTERN;
+import static aie.easyAPI.server.core.HeaderParser.BASIC_HEADER_PATTERN;
+
 public class Main {
-    public static void main(String[] args) throws SQLException {
-
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        ApplicationContext context = new ApplicationContext();
-        context.setPort(5555);
-        InternalServer internalServer = new InternalServer(context);
-        internalServer.bind();
-        stopWatch.stop();
-
+    public static void main(String[] args) throws Exception {
+        ByteBuffer buffer = ByteBuffer.wrap("gsdgsds sdfLMEOASD".getBytes());
+        long start = System.nanoTime();
+        String request = StandardCharsets.UTF_8.decode(buffer).toString();
+        System.out.println(System.nanoTime() - start);
+        start = System.nanoTime();
+      String  re1quest = new String(buffer.array());
+        System.out.println(System.nanoTime() - start);
     }
 }

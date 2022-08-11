@@ -1,10 +1,10 @@
 import aie.easyAPI.annotation.ControllerRoute;
-import aie.easyAPI.annotation.HttpGet;
+import aie.easyAPI.annotation.APIRequest;
 import aie.easyAPI.context.Controller;
 
-@ControllerRoute("index")
+@ControllerRoute("test2")
 public class TestC2 extends Controller {
-    @HttpGet("Hello/World")
+    @APIRequest("HelloWorld")
     void a() {
 
     }

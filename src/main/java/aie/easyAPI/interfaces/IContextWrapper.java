@@ -5,6 +5,7 @@ import aie.easyAPI.context.IMiddleware;
 import aie.easyAPI.context.IService;
 import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface IContextWrapper {
     /**
@@ -28,6 +29,7 @@ public interface IContextWrapper {
 
     /**
      * To unregister a service that been added before Check {@link #registerService(Class)}
+     *
      * @param service the service class
      * @return return true only if the service removed
      */
@@ -50,5 +52,21 @@ public interface IContextWrapper {
      */
     boolean unregisterMiddleware(Class<? extends IMiddleware> middlewareClass);
 
+    /**
+     * Create Service instances to be used in controller class if needed
+     *
+     * @param serviceClass Class of the service required
+     * @param <T>          Parameter of the subclass of {@link  IService}
+     * @return instance of param T
+     * @throws ServiceException if service not registered or it require unknown constructor parameter
+     */
+    <T extends IService> T getServiceInstance(Class<T> serviceClass) throws ServiceException;
+
+    /**
+     * Return Object of IRouteTree see {@link IRouteTree}
+     */
+    IRouteTree getRouteTree();
+
+    ObjectMapper getDefaultObjectMapper();
 
 }

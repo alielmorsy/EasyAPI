@@ -2,7 +2,7 @@ package aie.easyAPI.enums;
 
 /**
  * Content-Type Header Data. That enum contains the main content types Check <pre>
- * {@link HttpType#POST)
+ * {@link HttpMethod#POST)
  * </pre>
  */
 

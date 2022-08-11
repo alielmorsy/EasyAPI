@@ -1,4 +1,4 @@
-package aie.easyAPI.enums;
+package aie.easyAPI.constants;
 
 public class HttpCodes {
     private HttpCodes() {
@@ -34,6 +34,12 @@ public class HttpCodes {
 
 
     //500
-
+    public static final int InternalError = 500;
+    public static final int NotImplemented = 501;
+    public static final int BadGateway = 502;
+    public static final int ServiceUnavailable = 503;
+    public static final int GatewayTimeout = 504;
+    public static final int HttpVersionNotSupported = 505;
+    public static final int InsufficientStorage = 507;
 
 }

@@ -12,7 +12,6 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -21,25 +20,31 @@ import java.util.jar.JarFile;
 
 public class ClassRegister implements IClassRegister {
 
-    private static ClassRegister INSTANCE;
+    private static ClassRegister instance;
 
     public static ClassRegister getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ClassRegister();
+        if (instance == null) {
+            instance = new ClassRegister();
         }
-        return INSTANCE;
+        return instance;
     }
 
-    private ClassesLoader _classLoader;
+    private ClassesLoader classLoader;
     public IContextWrapper context;
 
+    public ClassRegister setContext(IContextWrapper context) {
+        this.context = context;
+        return this;
+    }
+
     public ClassRegister() {
-        _classLoader = new ClassesLoader(Thread.currentThread().getContextClassLoader());
+        classLoader = new ClassesLoader(Thread.currentThread().getContextClassLoader());
     }
 
     @Override
     public void findClasses() {
         String classpath = System.getProperty("java.class.path");
+
         String[] paths = classpath.split(System.getProperty("path.separator"));
         for (String path : paths) {
             File file = new File(path);
@@ -48,6 +53,7 @@ public class ClassRegister implements IClassRegister {
                     continue;
 
                 try {
+
                     findClasses(file, file, false);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -96,15 +102,16 @@ public class ClassRegister implements IClassRegister {
                 if (!className.startsWith("java") || !className.startsWith("jdk")) {
                     Class<?> clazz = null;
                     try {
-                        clazz = _classLoader.loadClass(className);
+                        clazz = classLoader.loadClass(className);
                     } catch (ClassNotFoundException e) {
                         try {
-                            clazz = _classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+                            clazz = classLoader.loadClassFromBytes(createClassName(root, file), Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                     if (clazz != null) {
+
                         checkClass(clazz);
                     }
                 }
@@ -127,7 +134,7 @@ public class ClassRegister implements IClassRegister {
                 e.printStackTrace();
             }
         } else if (clazz.getInterfaces().length > 0 && IMiddleware.class.equals(clazz.getInterfaces()[0])) {
-            context.unregisterMiddleware((Class<? extends IMiddleware>) clazz);
+            context.registerMiddleware((Class<? extends IMiddleware>) clazz);
         }
     }
 

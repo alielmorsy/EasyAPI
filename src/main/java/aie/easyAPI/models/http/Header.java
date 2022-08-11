@@ -1,11 +1,12 @@
-package aie.easyAPI.models;
+package aie.easyAPI.models.http;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 public class Header implements Serializable {
     private String name;
     private String value;
-
+    private Charset charset;
     public Header() {
 
     }
@@ -32,4 +33,12 @@ public class Header implements Serializable {
     }
 
 
+    public Charset charset() {
+        return charset;
+    }
+
+    public Header setCharset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
 }

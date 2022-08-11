@@ -2,16 +2,13 @@ package aie.easyAPI;
 
 import aie.easyAPI.context.*;
 import aie.easyAPI.context.impelements.ControllerMapper;
-import aie.easyAPI.core.structure.RouteTree;
+import aie.easyAPI.core.structure.RouteMapper;
 import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IContextWrapper;
+import aie.easyAPI.interfaces.IRouteTree;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +24,15 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
     private int port;
     private final File cacheFolder = new File(".cache");
     private final ControllerMapper controllerMapper;
-    private boolean OnSameThread = false;
-    private final RouteTree controllerRouteTree;
+
+    private final IRouteTree controllerRouteMapper;
 
     protected ApplicationContextFactory() {
         if (!cacheFolder.exists() || cacheFolder.isDirectory()) {
             cacheFolder.mkdir();
         }
         controllerMapper = new ControllerMapper(this);
-        controllerRouteTree = new RouteTree();
+        controllerRouteMapper = new RouteMapper();
         _services = new ArrayList<>();
         _middleWares = new ArrayList<>();
     }
@@ -50,19 +47,9 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
         this.port = port;
     }
 
-
-    public void setOnSameThread(boolean onSameThread) {
-        OnSameThread = onSameThread;
-    }
-
     public int getPort() {
         return port;
     }
-
-    boolean isOnSameThread() {
-        return OnSameThread;
-    }
-
 
     public void addController(Class<? extends Controller> controller) throws ControllerException {
         controllerMapper.addController(controller);
@@ -89,12 +76,9 @@ public abstract class ApplicationContextFactory implements IContextWrapper {
         return _middleWares.remove(middlewareClass);
     }
 
-
-    public RouteTree getControllerTree() {
-        return controllerRouteTree;
+    @Override
+    public IRouteTree getRouteTree() {
+        return controllerRouteMapper;
     }
-
-    public abstract IService getServiceInstance(Class<? extends IService> serviceClass) throws ServiceException;
-
 
 }

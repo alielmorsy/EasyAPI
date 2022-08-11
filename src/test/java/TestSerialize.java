@@ -1,12 +1,11 @@
 import aie.easyAPI.core.serialization.JsonSerialize;
 import aie.easyAPI.excepation.SerializeException;
-import aie.easyAPI.models.Header;
+import aie.easyAPI.models.http.Header;
 import aie.easyAPI.utils.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TestSerialize {

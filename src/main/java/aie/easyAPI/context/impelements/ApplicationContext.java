@@ -23,14 +23,14 @@ public class ApplicationContext extends ApplicationContextFactory {
     }
 
     @Override
-    public IService getServiceInstance(Class<? extends IService> serviceClass) throws ServiceException {
+    public <T extends IService> T getServiceInstance(Class<T> serviceClass) throws ServiceException {
         if (!_services.contains(serviceClass))
             throw new ServiceException("Service " + serviceClass.getSimpleName() + " Not Registered");
 
         return createObjectForService(serviceClass);
     }
 
-    private IService createObjectForService(Class<? extends IService> serviceClass) throws ServiceException {
+    private <T extends IService> T createObjectForService(Class<T> serviceClass) throws ServiceException {
         Constructor<?> con = serviceClass.getConstructors()[0];
         Object[] parameters = new Object[con.getTypeParameters().length];
         int index = 0;
@@ -38,13 +38,13 @@ public class ApplicationContext extends ApplicationContextFactory {
             if (p.isAssignableFrom(IDatabase.class)) {
                 //TODO: Setup Database Format
             } else if (p.isAssignableFrom(IService.class)) {
-                parameters[index++] = getServiceInstance((Class<? extends IService>) p);
+                parameters[index++] = getServiceInstance((Class<T>) p);
             } else {
                 throw new ServiceException("Service " + serviceClass.getSimpleName() + "Has Parameter: " + p.getSimpleName() + ", State Unknown");
             }
         }
         try {
-            return (IService) con.newInstance(parameters);
+            return (T) con.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new ServiceException("Can't Create Service: " + serviceClass, e);
 

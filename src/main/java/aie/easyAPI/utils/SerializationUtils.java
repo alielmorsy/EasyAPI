@@ -44,7 +44,7 @@ public class SerializationUtils {
         List<Field> fields = new ArrayList<>();
         for (Field field : tClass.getDeclaredFields()) {
 
-            if (isSkippable(field)) continue;
+            if (mustSkip(field)) continue;
             field.setAccessible(true);
             fields.add(field);
         }
@@ -57,7 +57,7 @@ public class SerializationUtils {
      * @param field the field to be checked
      * @return return true in case should skip that field else false
      */
-    private static boolean isSkippable(Field field) {
+    private static boolean mustSkip(Field field) {
         Annotation annotation = field.getAnnotation(SkipSerialize.class);
         return annotation != null;
     }

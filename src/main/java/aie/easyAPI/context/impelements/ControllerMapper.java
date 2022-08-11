@@ -3,11 +3,10 @@ package aie.easyAPI.context.impelements;
 import aie.easyAPI.ApplicationContextFactory;
 import aie.easyAPI.annotation.*;
 import aie.easyAPI.context.Controller;
+import aie.easyAPI.core.structure.Node;
 import aie.easyAPI.interfaces.IControllersMapper;
-import aie.easyAPI.enums.HttpType;
 import aie.easyAPI.excepation.ControllerException;
 import aie.easyAPI.models.ControllerRoutesMapping;
-import aie.easyAPI.models.HttpRequestSimpleData;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -30,127 +29,52 @@ public class ControllerMapper implements IControllersMapper {
             throw new ControllerException("Controller: " + controllerClass.getName() + " Not Mapped");
         }
 
-        ControllerRoutesMapping map = new ControllerRoutesMapping(mapAnnotation.value());
-        map.setMainClass(controllerClass);
-        addController(controllerClass, map);
-        context.getControllerTree().add(map);
+
+        var node = context.getRouteTree().addController(mapAnnotation.value(), controllerClass);
+        addController(controllerClass, node);
+
     }
 
 
-
-    private void addController(Class<? extends Controller> controllerClass, ControllerRoutesMapping map) throws ControllerException {
+    private void addController(Class<? extends Controller> controllerClass, Node<String> node) throws ControllerException {
 
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method : methods) {
 
-            UpdateBasedOnNotation(method, map);
+            UpdateBasedOnNotation(method, node);
         }
 
     }
 
-    private void UpdateBasedOnNotation(Method method, ControllerRoutesMapping mapping) throws ControllerException {
+    private void UpdateBasedOnNotation(Method method, Node<String> node) throws ControllerException {
         Annotation[] annotations = method.getDeclaredAnnotations();
         for (Annotation annotation : annotations) {
-
-            HttpRequestSimpleData data = extractDataFromMethod(annotation);
-            if (data == null)
-                continue;
-
-            if (data.getRoute().isEmpty() || data.getRoute().trim().isEmpty()) {
-                //TODO: Logger Thing
+            String data = extractDataFromMethod(annotation);
+            if (data == null) {
+                //TODO Logger
                 continue;
             }
-            if (data.getRoute().equals("/")) {
-
-                if (data.getRequestType() != HttpType.GET) {
-                    ControllerRoutesMapping customMap = new ControllerRoutesMapping("/");
-                    customMap.setHttpType(data.getRequestType());
-                    customMap.setMethodName(method.getName());
-                    mapping.addRoute(customMap);
-
-                } else
-                    mapping.setMethodName(method.getName());
+            if (data.isEmpty() || data.trim().isEmpty()) {
+                //TODO logger
+                break;
+            }
+            if (data.equals("/")) {
+                context.getRouteTree().addMethodToStartupController(node, method);
             } else {
-                addRouteVariables(data.getRoute(), method, mapping, data.getRequestType());
+                context.getRouteTree().addSubURI(node, data, method);
             }
         }
     }
 
-    private boolean addRouteVariables(String value, Method method, ControllerRoutesMapping map, HttpType requestType) throws ControllerException {
-        String[] routes = value.split("/");
-        if (routes.length == 1) {
-            ControllerRoutesMapping subRoute = new ControllerRoutesMapping(value);
-            subRoute.setMethodName(method.getName());
-            subRoute.setHttpType(requestType);
-            map.addRoute(subRoute);
-            return true;
-        }
-
-        ControllerRoutesMapping newControllerMapping;
-        if (routes[0].isEmpty()) {
-            newControllerMapping = map;
-        } else {
-            newControllerMapping = new ControllerRoutesMapping(routes[0]);
-            newControllerMapping.setHttpType(requestType);
-            newControllerMapping.setMethodName(method.getName());
-            map.addRoute(newControllerMapping);
-        }
-        boolean foundVariables = false;
-        for (int i = 1; i < routes.length; i++) {
-            String route = routes[i];
-
-            route = checkVariable(route);
-            if (route == null) {
-                if (foundVariables) {
-                    throw new ControllerException("Can't Use Routes After Variables");
-                }
-                ControllerRoutesMapping newMap = new ControllerRoutesMapping(routes[i]);
-                newControllerMapping.addRoute(newMap);
-                newMap.setHttpType(requestType);
-                newMap.setMethodName(method.getName());
-                newControllerMapping = newMap;
-
-            } else {
-                foundVariables = true;
-                newControllerMapping.addVariableRoute(route);
-            }
-
-        }
-
-        return true;
-    }
-
-
-    private static HttpRequestSimpleData extractDataFromMethod(Annotation annotation) {
+    private static String extractDataFromMethod(Annotation annotation) {
         Class<? extends Annotation> clazz = annotation.annotationType();
 
-        HttpRequestSimpleData data = new HttpRequestSimpleData();
-        if (HttpGet.class.equals(clazz)) {
-            HttpGet get = (HttpGet) annotation;
-
-            data.setRoute(get.value());
-            data.setRequestType(HttpType.GET);
-        } else if (HttpPost.class.equals(clazz)) {
-            HttpPost post = (HttpPost) annotation;
-            data.setRoute(post.value());
-            data.setRequestType(HttpType.POST);
-        } else if (HttpDelete.class.equals(clazz)) {
-            HttpDelete delete = (HttpDelete) annotation;
-            data.setRoute(delete.value());
-            data.setRequestType(HttpType.DELETE);
-        } else if (HttpHead.class.equals(clazz)) {
-            HttpHead head = (HttpHead) annotation;
-            data.setRoute(head.value());
-            data.setRequestType(HttpType.HEAD);
-        } else
-            return null;
-        return data;
+        if (APIRequest.class.equals(clazz)) {
+            APIRequest get = (APIRequest) annotation;
+            return get.value();
+        }
+        return null;
     }
 
-    private static String checkVariable(String value) {
-        Pattern pattern = Pattern.compile("\\{([A-Za-z_][A-Za-z1-9]*)}");
-        Matcher matcher = pattern.matcher(value);
-        return matcher.find() ? matcher.group(1) : null;
-    }
 
 }

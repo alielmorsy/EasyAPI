@@ -1,8 +1,9 @@
 package aie.easyAPI.models;
 
 import aie.easyAPI.context.Controller;
-import aie.easyAPI.enums.HttpType;
+import aie.easyAPI.enums.HttpMethod;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +12,8 @@ import java.util.Map;
 public class ControllerRoutesMapping {
     private String route;
     private boolean hasSubData = false;
-    private HttpType httpType = HttpType.GET;
     private Class<? extends Controller> mainClass;
 
-    public List<ControllerRoutesMapping> getSubLocations() {
-        return subLocations;
-    }
 
     public List<String> getVariableRoutes() {
         return variableRoutes;
@@ -25,7 +22,7 @@ public class ControllerRoutesMapping {
     private Map<String, String> variablesMap;
     public List<ControllerRoutesMapping> subLocations;
     private List<String> variableRoutes;
-    private String methodName = "index";
+    private Map<String, Method> methodsMapping;
 
     public ControllerRoutesMapping(String location) {
         this.route = location;
@@ -46,14 +43,6 @@ public class ControllerRoutesMapping {
 
     public void setHasSubData(boolean hasSubData) {
         this.hasSubData = hasSubData;
-    }
-
-    public HttpType getHttpType() {
-        return httpType;
-    }
-
-    public void setHttpType(HttpType httpType) {
-        this.httpType = httpType;
     }
 
     public void addRoute(ControllerRoutesMapping mapping) {
@@ -78,13 +67,6 @@ public class ControllerRoutesMapping {
         variablesMap.put(variableName, value);
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
 
 
     public Class<? extends Controller> getMainClass() {

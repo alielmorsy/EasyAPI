@@ -1,6 +1,6 @@
 package aie.easyAPI.excepation;
 
-public class ServerException extends RuntimeException{
+public class ServerException extends Exception{
     public ServerException() {
     }
 

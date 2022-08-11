@@ -9,24 +9,18 @@ repositories {
     mavenCentral()
 
 }
-//sourceCompatibility = 1.9
-//targetCompatibility = 1.9
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 java {
 
 }
 dependencies {
-
-    implementation 'mysql:mysql-connector-java:8.0.28'
-
-//    implementation files('libs/commons-dbcp2-2.9.0.jar')
-//    implementation files('libs/commons-pool2-2.11.1.jar')
-// https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
-    implementation 'commons-dbcp:commons-dbcp:1.4'
-
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'org.json:json:20220320'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    implementation 'org.json:json:20220320'
-
 }
 
 test {

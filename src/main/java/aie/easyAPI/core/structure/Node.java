@@ -1,8 +1,9 @@
 package aie.easyAPI.core.structure;
 
 import aie.easyAPI.context.Controller;
-import aie.easyAPI.enums.HttpType;
+import aie.easyAPI.enums.HttpMethod;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,56 +11,51 @@ public class Node<T> {
 
     private T value;
 
-    private boolean isVariable;
+    private List<Node<T>> children;
 
     private Class<? extends Controller> controllerClass;
-    private String methodName;
-    private HttpType httpType;
 
-    public HttpType getHttpType() {
-        return httpType;
-    }
+    private Method method;
 
-    public void setHttpType(HttpType httpType) {
-        this.httpType = httpType;
-    }
-
-    final List<Node<T>> nodes = new ArrayList<>();
-
-
-    public T getValue() {
+    public T value() {
         return value;
     }
 
-    public void setValue(T value) {
+    public Node<T> setValue(T value) {
         this.value = value;
+        return this;
     }
 
-    public boolean isVariable() {
-        return isVariable;
-    }
 
-    public void setVariable(boolean variable) {
-        isVariable = variable;
-    }
-
-    public List<Node<T>> getNodes() {
-        return nodes;
-    }
-
-    public Class<? extends Controller> getControllerClass() {
+    public Class<? extends Controller> controllerClass() {
         return controllerClass;
     }
 
-    public void setControllerClass(Class<? extends Controller> controllerClass) {
+    public Node<T> setControllerClass(Class<? extends Controller> controllerClass) {
         this.controllerClass = controllerClass;
+        return this;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public Method method() {
+        return method;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public Node<T> setMethod(Method method) {
+        this.method = method;
+        return this;
+    }
+
+    public List<Node<T>> getNodes() {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        return children;
+    }
+
+    public void addNode(Node<T> node) {
+        if (children == null) {
+            children = new ArrayList<>(12);
+        }
+        children.add(node);
     }
 }

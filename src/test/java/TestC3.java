@@ -1,14 +1,14 @@
 import aie.easyAPI.annotation.ControllerRoute;
-import aie.easyAPI.annotation.HttpGet;
+import aie.easyAPI.annotation.APIRequest;
 import aie.easyAPI.annotation.HttpPost;
 import aie.easyAPI.context.Controller;
-@ControllerRoute("get")
+@ControllerRoute("get1243")
 public class TestC3 extends Controller {
-    @HttpPost("/")
+    @APIRequest("/")
     public void af(){
 
     }
-    @HttpGet("/")
+    @APIRequest("/")
     public void afa(){
 
     }

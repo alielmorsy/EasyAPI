@@ -1,19 +1,19 @@
 # Easy API
-Easy API Tool For Developers whose want to create their own api without knowledge on backend development. The Tool should support a0 lot of tools that helps to create your own API without the complexity of handle data validation, or requests.
 
-> Important Note that project still underdevelopment 
+Easy API is a tool can be used to connect java to other programming languages together without concerns about handling JSON objects or mapping anything
+
+> Important Note that project still underdevelopment
 > Current State: Creating Http Server
+
 ## My Sights For Application
 
- - [x] Create Controller And Routes 
- - [x] Create Service and Middlewares
- - [x] Optimize Routes Generator 
- - [x] Create Serializable For Request and Responses (Using Json Currently) 
- - [x] Create Http Server
- - [ ] Create WebSockets
- - [ ] Create Main Controllers (Login-Register-generate Api Tokens-....)
- - [ ] Create Database Context
- > **This is my Visions For Project Now. Wish me Luck :)**
- 
+- [x] Create Controller And Project Routes
+- [x] Create Service 
+- [x] Optimize Routes Generator
+- [x] Create Serializable For Request and Responses (Using Json Currently)
+- [x] Create Socket Server
+
+> **This is my Visions For Project Now. Wish me Luck :)**
+
 
 > Check WorkFlow Folder To Understand More about the project 
