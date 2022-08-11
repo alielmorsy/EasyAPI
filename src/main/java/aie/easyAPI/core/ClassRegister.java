@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -28,7 +29,7 @@ public class ClassRegister implements IClassRegister {
     private static final Logger logger = LoggerFactory.getLogger(ClassRegister.class);
     private static ClassRegister instance;
 
-    private Executor executors;
+    private ExecutorService executors;
 
     public static IClassRegister getInstance() {
         if (instance == null) {
@@ -43,7 +44,7 @@ public class ClassRegister implements IClassRegister {
 
     public ClassRegister() {
         classLoader = new ClassesLoader(Thread.currentThread().getContextClassLoader());
-        executors = Executors.newFixedThreadPool(2);
+        //  executors = Executors.newFixedThreadPool(2);
     }
 
     @Override
@@ -64,8 +65,8 @@ public class ClassRegister implements IClassRegister {
     private void findClassesV2(File root, File file) {
         if (file.isDirectory()) {
             for (File child : Objects.requireNonNull(file.listFiles())) {
-                //    findClassesV2(root, child);
-                executors.execute(() -> findClassesV2(root, child));
+                findClassesV2(root, child);
+                //  executors.execute(() -> findClassesV2(root, child));
             }
             return;
         }
