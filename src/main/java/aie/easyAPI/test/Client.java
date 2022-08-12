@@ -7,19 +7,18 @@ import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Client {
     public static void main(String[] args) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        Socket socket = new Socket("127.0.0.1", 5555);
+        Socket socket = new Socket("127.0.0.1", 8080);
         var in = socket.getInputStream();
         var out = socket.getOutputStream();
         var map = new HashMap<String, Object>();
-        map.put("request", "hello");
+        map.put("request", "engine/startEngine");
         var request = new SimpleRequest();
         request.message = "Hello Message";
-        map.put("data", request);
+       // map.put("data", request);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         mapper.writeValue(baos, map);
         out.write(ByteBuffer.allocate(4).putInt(baos.size()).array());

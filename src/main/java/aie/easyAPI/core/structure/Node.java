@@ -1,7 +1,6 @@
 package aie.easyAPI.core.structure;
 
 import aie.easyAPI.context.Controller;
-import aie.easyAPI.enums.HttpMethod;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

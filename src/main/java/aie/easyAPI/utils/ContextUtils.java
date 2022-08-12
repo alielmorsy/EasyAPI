@@ -1,6 +1,5 @@
 package aie.easyAPI.utils;
 
-import aie.easyAPI.core.ClassRegister;
 import aie.easyAPI.interfaces.IContextWrapper;
 
 import java.lang.reflect.Field;

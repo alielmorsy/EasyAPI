@@ -1,7 +1,7 @@
 package aie.easyAPI.context;
 
-import aie.easyAPI.annotation.ControllerRoute;
 import aie.easyAPI.annotation.APIRequest;
+import aie.easyAPI.annotation.ControllerRoute;
 
 /**
  * Abstract Class for creating a controllers for your API

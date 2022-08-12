@@ -2,12 +2,10 @@ package aie.easyAPI;
 
 import aie.easyAPI.context.impelements.ApplicationContext;
 import aie.easyAPI.core.ClassRegister;
-import aie.easyAPI.core.structure.Node;
 import aie.easyAPI.excepation.ServerException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.server.core.StandardServer;
 import aie.easyAPI.utils.AssertChecks;
-import aie.easyAPI.utils.ContextUtils;
 
 /**
  * The Main Application Class It the Start Point of the application.

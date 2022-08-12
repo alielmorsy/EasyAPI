@@ -86,6 +86,10 @@ public class ConnectionHandler implements ClientService, Closeable {
             }
             requestString = request.textValue();
             var node = context.getRouteTree().search(requestString);
+            if (node == null) {
+                sendBadRequest();
+                return;
+            }
             var handler = new RouteHandler(context, node, json.get("data"));
             handler.handle();
             var value = handler.value();
@@ -112,8 +116,10 @@ public class ConnectionHandler implements ClientService, Closeable {
                 var buffer = context.getDefaultObjectMapper().writeValueAsBytes(new BadRequest("Bad Request", null));
                 write(ByteBuffer.wrap(buffer));
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 //
             } catch (IOException e) {
+                e.printStackTrace();
                 try {
                     close();
                 } catch (IOException ex) {

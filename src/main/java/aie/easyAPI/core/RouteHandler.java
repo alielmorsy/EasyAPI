@@ -6,6 +6,7 @@ import aie.easyAPI.excepation.ConnectionException;
 import aie.easyAPI.excepation.ServiceException;
 import aie.easyAPI.interfaces.IContextWrapper;
 import aie.easyAPI.interfaces.IHandler;
+import aie.easyAPI.models.BadRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -46,6 +47,16 @@ public class RouteHandler implements IHandler {
             if (result != null)
                 value = contextWrapper.getDefaultObjectMapper().writeValueAsString(result);
         } catch (ServiceException | InvocationTargetException | InstantiationException | IllegalAccessException | JsonProcessingException e) {
+            if (e.getCause() != null) {
+                var badRequest = new BadRequest();
+                badRequest.setMessage(e.toString());
+                try {
+                    value = contextWrapper.getDefaultObjectMapper().writeValueAsString(badRequest);
+                    return;
+                } catch (JsonProcessingException ex) {
+                    //
+                }
+            }
             throw new ConnectionException("Failed To Create Instance for Controller: ".concat(clazz.getName()), e);
         }
     }
