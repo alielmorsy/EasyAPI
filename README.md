@@ -71,3 +71,13 @@ public class HelloService implements IService {
 }
 ```
 - here it implements IService it's what tell the mapper that is Service. and I am planning for future work for it too
+
+## How to build a client
+- I didn't make an implement for client for now but will be soon.
+- it uses simple json just: 
+  - property `request` it contains what the route of your request. Let's take the controller above as example so routes can be `Hello` or `Hello/world`. Note U cannot use more than "/ per route"
+  - property `data` may be `null` if you want to send data to controller it should be via `data`
+- but before u send u have to send length of data as int (4 bytes in big endian). then send your request and wait for response
+
+## Dependencies
+- I used in EasyAPI Jackson library to map json.
